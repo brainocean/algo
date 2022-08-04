@@ -12,8 +12,8 @@ using namespace std;
 typedef vector<int>::iterator ITR;
 
 struct BigInt {
-  static const int WIDTH = 1;
-  static const int BASE = 10;  // 10 ^ WIDTH
+  static const int WIDTH = 4;
+  static const int BASE = 10000;  // 10 ^ WIDTH
   vector<int> digits;
 
   BigInt() {}
@@ -31,10 +31,12 @@ struct BigInt {
 
   BigInt operator = (const string &numstr) {
     digits.clear();
-    int digitCount = numstr.size()/WIDTH;
+    int digitCount = (numstr.size() + WIDTH - 1) / WIDTH;
     digits.reserve(digitCount);
-    for(int s=digitCount-1; s>=0; s--) {
-      digits.push_back(numstr[s]-'0');
+    for(int s=0; s < digitCount; s++) {
+      int end = numstr.length() - s*WIDTH;
+      int start = max((int)numstr.length() - (s+1)*WIDTH, 0);
+      digits.push_back(stoi(numstr.substr(start, (end-start))));
     }
     return *this;
   }
@@ -55,16 +57,17 @@ struct BigInt {
     for(int i=placeCount(); i <= pos; i++) {
       digits.push_back(0);
     }
-    unsigned prevPos = pos + 1;
+    unsigned nextPos = pos + 1;
     if (v >= 0) {
       digits[pos] = v % BASE;
-      if (int carry = v / BASE > 0) {
-        putIntAt(prevPos, carry + getIntAt(prevPos));
+      int carry = v / BASE;
+      if (carry > 0) {
+        putIntAt(nextPos, carry + getIntAt(nextPos));
       }
     } else {
-      int borrowed = ((-1 * v) - 1) / BASE + 1;
+      int borrowed = ((-1 * v) + BASE - 1) / BASE;
       digits[pos] = v + borrowed * BASE;
-      putIntAt(prevPos, getIntAt(prevPos) - borrowed);
+      putIntAt(nextPos, getIntAt(nextPos) - borrowed);
     }
   }
 
@@ -78,7 +81,7 @@ struct BigInt {
 
   BigInt operator + (const BigInt &other) {
     BigInt result;
-    for(int i = 0; i < max(digits.size(), other.digits.size()); i++) {
+    for(int i = 0; i < max(placeCount(), other.placeCount()); i++) {
       result.putIntAt(i, getIntAt(i) + other.getIntAt(i) + result.getIntAt(i));
     }
     return result;
@@ -148,7 +151,11 @@ struct BigInt {
         nonLeadingZero = true;
         result += to_string(v);
       } else {
-        if(nonLeadingZero) result += '0'; // '0' * WIDTH
+        if (nonLeadingZero) {
+          string zeros;
+          zeros.assign(WIDTH, '0');
+          result += zeros;
+        }
       }
     }
     if(result.empty()) result = "0";
@@ -171,6 +178,7 @@ istream& operator >> (istream& ins, BigInt& x) {
 
 void test() {
 
+  /*
   BigInt i("12345");
   assert(i.getIntAt(2)==3);
   i.putIntAt(5, 6);
@@ -180,7 +188,6 @@ void test() {
   i.putIntAt(8, 12);
   assert(i.toString()=="1200612345");
 
-  assert(BigInt("000") == BigInt("0"));
 
   i = "999";
   i.putIntAt(0, 10);
@@ -193,6 +200,9 @@ void test() {
   i = "999";
   i.putIntAt(0, -10);
   assert(i.toString() == "980");
+ */
+
+  assert(BigInt("000") == BigInt("0"));
 
   assert(BigInt("2") + BigInt("18") == BigInt("20"));
   assert(BigInt("9") + BigInt("9")== BigInt("18"));
