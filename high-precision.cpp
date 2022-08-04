@@ -79,13 +79,47 @@ struct BigInt {
   BigInt operator + (const BigInt &other) {
     BigInt result;
     for(int i = 0; i < max(digits.size(), other.digits.size()); i++) {
-      result.putIntAt(i, getIntAt(i) + other.getIntAt(i));
+      result.putIntAt(i, getIntAt(i) + other.getIntAt(i) + result.getIntAt(i));
     }
     return result;
   }
 
+  BigInt operator += (const BigInt &other) {
+    *this = *this + other;
+    return *this;
+  }
+
   BigInt operator - (const BigInt &other) {
     return *this + other.negtive();
+  }
+
+  BigInt operator * (const BigInt &other) {
+    BigInt result;
+    for(int j = 0; j < other.placeCount(); j++) {
+      BigInt placeResult;
+      for (int i = 0; i < placeCount(); i++) {
+        BigInt stepResult;
+        stepResult.putIntAt(i + j, (getIntAt(i) * other.getIntAt(j)));
+        placeResult += stepResult;
+      }
+      result += placeResult;
+    }
+    return result;
+  }
+
+  BigInt& removeLeadingZeros() {
+    for(vector<int>::reverse_iterator it = digits.rbegin(); it != digits.rend(); it++) {
+      if(*it==0) digits.pop_back();
+      else break;
+    }
+    return *this;
+  }
+
+  bool isZero() const {
+    for(int i = 0; i < placeCount(); i++) {
+      if(getIntAt(i) != 0) return false;
+    }
+    return true;
   }
 
   bool operator < (const BigInt &other) const {
@@ -101,6 +135,7 @@ struct BigInt {
   }
 
   bool operator == (const BigInt &other) const {
+    if(isZero() && other.isZero()) return true;
     return !(other < *this) && !(*this < other);
   }
 
@@ -116,6 +151,7 @@ struct BigInt {
         if(nonLeadingZero) result += '0'; // '0' * WIDTH
       }
     }
+    if(result.empty()) result = "0";
     return result;
   }
 
@@ -144,6 +180,8 @@ void test() {
   i.putIntAt(8, 12);
   assert(i.toString()=="1200612345");
 
+  assert(BigInt("000") == BigInt("0"));
+
   i = "999";
   i.putIntAt(0, 10);
   assert(i.toString()=="1000");
@@ -156,10 +194,23 @@ void test() {
   i.putIntAt(0, -10);
   assert(i.toString() == "980");
 
+  assert(BigInt("2") + BigInt("18") == BigInt("20"));
   assert(BigInt("9") + BigInt("9")== BigInt("18"));
   assert(BigInt("123") + BigInt("456") == BigInt("579"));
+  assert(BigInt("60") + BigInt("480") == BigInt("540"));
 
   assert(BigInt("456") - BigInt("123") == BigInt("333"));
+
+
+  assert(BigInt("1") * BigInt("0") == BigInt("0"));
+  assert(BigInt("1") * BigInt("1") == BigInt("1"));
+  assert(BigInt("10") * BigInt("2") == BigInt("20"));
+  assert(BigInt("100") * BigInt("0") == BigInt("0"));
+  assert(BigInt("1") * BigInt("10") == BigInt("10"));
+  assert(BigInt("123") * BigInt("11") == BigInt("1353"));
+  assert(BigInt("12") * BigInt("9") == BigInt("108"));
+  assert(BigInt("12") * BigInt("45") == BigInt("540"));
+  assert(BigInt("123") * BigInt("456") == BigInt("56088"));
 
   cout << "all pass" << endl;
 }
