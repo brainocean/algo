@@ -12,8 +12,8 @@ using namespace std;
 typedef vector<int>::iterator ITR;
 
 struct BigInt {
-  static const int WIDTH = 4;
-  static const int BASE = 10000;  // 10 ^ WIDTH
+  static const int WIDTH = 8;
+  static const int BASE = 100000000;  // 10 ^ WIDTH
   vector<int> digits;
 
   BigInt() {}
@@ -178,7 +178,7 @@ istream& operator >> (istream& ins, BigInt& x) {
 
 void test() {
 
-  /*
+  /* These test cases are only valid for WIDTH==1
   BigInt i("12345");
   assert(i.getIntAt(2)==3);
   i.putIntAt(5, 6);
