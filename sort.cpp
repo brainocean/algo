@@ -67,6 +67,23 @@ void selectionSort(int data[], int len) {
   }
 }
 
+// insertion sort
+
+inline void insertWithOrder(int value, int data[], int len) {
+  int i = len-1;
+  while(i >= 0 && data[i] > value) {
+    data[i+1] = data[i];
+    i--;
+  }
+  data[i+1] = value;
+}
+
+void insertionSort(int data[], int len) {
+  for(int i = 0; i < len; i++) {
+    insertWithOrder(data[i], data, i);
+  }
+}
+
 void test() {
 
   const int COUNT = 7;
@@ -79,6 +96,10 @@ void test() {
 
   shuffle(data, data+COUNT, default_random_engine(0));
   selectionSort(data, COUNT);
+  assertArrayEq(data, expected, COUNT);
+
+  shuffle(data, data+COUNT, default_random_engine(0));
+  insertionSort(data, COUNT);
   assertArrayEq(data, expected, COUNT);
 
   cout << "All pass" << endl;
