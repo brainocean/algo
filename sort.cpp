@@ -21,7 +21,7 @@ void outputArray(int data[], int len) {
 
 // bubble sort
 
-bool bubbleMax(int data[], int len) {
+inline bool bubbleMaxToRight(int data[], int len) {
   bool swapped = false;
   for(int i = 0; i < len-1; i++) {
     if(data[i]>data[i+1]) {
@@ -35,14 +35,14 @@ bool bubbleMax(int data[], int len) {
 void bubbleSort(int data[], int len) {
   bool swapped = false;
   for(int i = 0; i < len-1; i++) {
-    swapped = bubbleMax(data, len-i);
+    swapped = bubbleMaxToRight(data, len-i);
     if(!swapped) return;
   }
 }
 
 // selection sort
 
-int findMax(int data[], int len) {
+inline int findMax(int data[], int len) {
   int idx = 0;
   int max = INT_MIN;
   for(int i = 0; i < len; i++) {
@@ -54,7 +54,7 @@ int findMax(int data[], int len) {
   return idx;
 }
 
-void swapMaxToRight(int data[], int len) {
+inline void swapMaxToRight(int data[], int len) {
   int maxIdx = findMax(data, len);
   if (maxIdx != len - 1) {
     swap(data[maxIdx], data[len - 1]);
