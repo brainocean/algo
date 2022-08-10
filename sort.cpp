@@ -20,15 +20,22 @@ void outputArray(int data[], int len) {
 
 // bubble sort
 
-void bubbleMax(int data[], int len) {
+bool bubbleMax(int data[], int len) {
+  bool swapped = false;
   for(int i = 0; i < len-1; i++) {
-    if(data[i]>data[i+1]) swap(data[i], data[i+1]);
+    if(data[i]>data[i+1]) {
+      swap(data[i], data[i+1]);
+      swapped = true;
+    }
   }
+  return swapped;
 }
 
 void bubbleSort(int data[], int len ) {
+  bool swapped = false;
   for(int i = 0; i < len-1; i++) {
-    bubbleMax(data, len-i);
+    swapped = bubbleMax(data, len-i);
+    if(!swapped) return;
   }
 }
 
