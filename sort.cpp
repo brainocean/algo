@@ -84,6 +84,35 @@ void insertionSort(int data[], int len) {
   }
 }
 
+// merge sort
+
+void merge(int a[], int low, int mid, int high) {
+  int temp[high-low+1];
+  // subarray1 = a[low..mid], subarray2 = a[mid+1..high], both sorted
+  int N = high-low+1;
+  int b[N];
+  int left = low, right = mid+1, bIdx = 0;
+  while (left <= mid && right <= high) // 归并
+    b[bIdx++] = (a[left] <= a[right]) ? a[left++] : a[right++];
+  while (left <= mid) b[bIdx++] = a[left++]; // left-mid的剩余元素
+  while (right <= high) b[bIdx++] = a[right++]; // right-high的剩余元素
+  for (int k = 0; k < N; k++) a[low+k] = b[k]; // copy back
+}
+
+void mergeSort(int data[], int low, int high) {
+  // 要排序的数组是 a[low..high]
+  if (low < high) { // 基础情况: low >= high (0或1项)
+    int mid = (low+high) / 2;
+    mergeSort(data, low, mid ); // 分成两半
+    mergeSort(data, mid+1, high); // 递归地将它们排序
+    merge(data, low, mid, high); // 解决步骤: 归并子程序
+  }
+}
+
+void mergeSort(int data[], int len) {
+  mergeSort(data, 0, len-1);
+}
+
 void test() {
 
   const int COUNT = 7;
@@ -100,6 +129,10 @@ void test() {
 
   shuffle(data, data+COUNT, default_random_engine(0));
   insertionSort(data, COUNT);
+  assertArrayEq(data, expected, COUNT);
+
+  shuffle(data, data+COUNT, default_random_engine(0));
+  mergeSort(data, COUNT);
   assertArrayEq(data, expected, COUNT);
 
   cout << "All pass" << endl;
