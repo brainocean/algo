@@ -223,6 +223,17 @@ void test() {
   assert(BigInt("123") * BigInt("456") == BigInt("56088"));
 
   cout << "all pass" << endl;
+
+  // int i = 2147483647;
+  // int i = 122;
+  // cout << (i & i-1) << endl;
+  // cout << i << endl;
+  // cout << (i & -i) << endl;;
+  // cout << bitset<32>(i) << endl;
+  // cout << bitset<32>(-i) << endl;
+  // cout << bitset<32>(i & -i) << endl;
+  // cout << bitset<32>(-8 & -9) << endl;
+  // cout << (-32 & -33) << endl;
 }
 
 int main() {

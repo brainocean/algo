@@ -113,6 +113,36 @@ void mergeSort(int data[], int len) {
   mergeSort(data, 0, len-1);
 }
 
+// quick sort
+int partition(int data[], int low, int high) {
+   int pivot = data[low];
+   while (low < high) {
+     while (low < high && data[high] >= pivot) {
+       --high;
+     }
+     data[low] = data[high];
+     while (low < high && data[low] <= pivot) {
+       ++low;
+     }
+     data[high] = data[low];
+   }
+   data[low] = pivot;
+   return low;
+ }
+
+ void quickSort(int data[], int low, int high)
+ {
+   if (low < high) {
+     int pivot = partition(data, low, high);
+     quickSort(data, low, pivot - 1);
+     quickSort(data, pivot + 1, high);
+   }
+ }
+
+void quickSort(int data[], int len) {
+  quickSort(data, 0, len-1);
+}
+
 void test() {
 
   const int COUNT = 7;
@@ -133,6 +163,10 @@ void test() {
 
   shuffle(data, data+COUNT, default_random_engine(0));
   mergeSort(data, COUNT);
+  assertArrayEq(data, expected, COUNT);
+
+  shuffle(data, data+COUNT, default_random_engine(0));
+  quickSort(data, COUNT);
   assertArrayEq(data, expected, COUNT);
 
   cout << "All pass" << endl;
